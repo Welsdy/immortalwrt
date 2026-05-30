@@ -13,6 +13,11 @@ PKG_FLAGS:=nonshared
 
 include $(INCLUDE_DIR)/package.mk
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(if $(wildcard ./files),$(CP) ./files/* $(PKG_BUILD_DIR)/)
+endef
+
 define Build/Compile
 endef
 
@@ -36,6 +41,7 @@ ALLWIFIBOARDS:= \
 	buffalo_wxr-5950ax12 \
 	cambiumnetworks_xe34 \
 	cmcc_mr3000d-ci \
+	cmcc_rax3000q \
 	cmcc_rm2-6 \
 	compex_wpq873 \
 	dynalink_dl-wrx36 \
@@ -232,6 +238,7 @@ $(eval $(call generate-ipq-wifi-package,asus_rt-ax89x,Asus RT-AX89X))
 $(eval $(call generate-ipq-wifi-package,buffalo_wxr-5950ax12,Buffalo WXR-5950AX12))
 $(eval $(call generate-ipq-wifi-package,cambiumnetworks_xe34,Cambium Networks XE3-4))
 $(eval $(call generate-ipq-wifi-package,cmcc_mr3000d-ci,CMCC MR3000D-CI))
+$(eval $(call generate-ipq-wifi-package,cmcc_rax3000q,CMCC RAX3000Q))
 $(eval $(call generate-ipq-wifi-package,cmcc_rm2-6,CMCC RM2-6))
 $(eval $(call generate-ipq-wifi-package,compex_wpq873,Compex WPQ-873))
 $(eval $(call generate-ipq-wifi-package,dynalink_dl-wrx36,Dynalink DL-WRX36))
