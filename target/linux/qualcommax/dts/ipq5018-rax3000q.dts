@@ -404,10 +404,10 @@
 	status = "okay";
 
 	boot-args = <
-		/*       type:	*/	0x1	/* PCIE0	*/
+		/*       type:	*/	0x2	/* PCIE1	*/
 		/*     length:	*/	4
 		/*     UPD ID:	*/	2
-		/* reset GPIO:	*/	15
+		/* reset GPIO:	*/	27
 		/*   reserved:	*/	0 0>;
 };
 
