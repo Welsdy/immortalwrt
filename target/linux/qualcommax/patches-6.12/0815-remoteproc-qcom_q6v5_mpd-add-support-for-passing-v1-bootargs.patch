@@ -149,8 +149,8 @@ Signed-off-by: George Moussalem <george.moussalem@outlook.com>
  static const struct wcss_data q6_ipq5018_res_init = {
  	.pasid = MPD_WCNSS_PAS_ID,
 -	// .share_upd_info_to_q6 = true, /* Version 1 */
-+	.share_upd_info_to_q6 = true,
-+	.bootargs_version = VERSION1,
++	// .share_upd_info_to_q6 = true,
++	// .bootargs_version = VERSION1,
  	// .mdt_load_sec = qcom_mdt_load_pd_seg,
  };
  
