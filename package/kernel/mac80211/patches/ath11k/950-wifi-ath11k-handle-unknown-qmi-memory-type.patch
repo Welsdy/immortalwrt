@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: RAX3000Q <dev@rax3000q>
+Date: Mon, 1 Jun 2026 00:00:00 +0000
+Subject: [PATCH] wifi: ath11k: fix memory segment count for unknown QMI types
+
+Increment idx in the default switch case for unknown QMI memory types
+(e.g., type 10 from dual-QCN6122 firmware 2.7.0.1-01744). This
+maintains idx == i alignment, so the subsequent mem_seg_count = idx
+correctly reflects the original firmware request count.
+
+Without this fix, skipping the idx increment causes later known-type
+entries to write to target_mem[idx] at the compressed position,
+overwriting the unknown type's entry. The resulting segment count and
+order mismatch causes the Q6 firmware to ASSERT in err_smem_ver.2.1.
+
+Signed-off-by: RAX3000Q <dev@rax3000q>
+---
+ drivers/net/wireless/ath/ath11k/qmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/ath/ath11k/qmi.c
++++ b/drivers/net/wireless/ath/ath11k/qmi.c
+@@ -2112,7 +2112,8 @@ static int ath11k_qmi_assign_target_mem_chunk(struct ath11k_base *ab)
+ 		default:
+ 			ath11k_warn(ab, "qmi ignore invalid mem req type %d\n",
+ 				    ab->qmi.target_mem[i].type);
+-			break;
++			idx++;
++			break;
+ 		}
+ 	}
+ 	ab->qmi.mem_seg_count = idx;
