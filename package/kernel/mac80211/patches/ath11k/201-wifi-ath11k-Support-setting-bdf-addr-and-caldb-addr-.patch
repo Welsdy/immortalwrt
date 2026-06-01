@@ -5,8 +5,8 @@ Subject: [PATCH] wifi: ath11k: Support setting bdf-addr and caldb-addr via DT
 
 Signed-off-by: Ziyang Huang <hzyitc@outlook.com>
 ---
- drivers/net/wireless/ath/ath11k/qmi.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath11k/qmi.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
 --- a/drivers/net/wireless/ath/ath11k/qmi.c
 +++ b/drivers/net/wireless/ath/ath11k/qmi.c
@@ -29,35 +29,24 @@ Signed-off-by: Ziyang Huang <hzyitc@outlook.com>
  			ab->qmi.target_mem[idx].iaddr = NULL;
  			ab->qmi.target_mem[idx].size = ab->qmi.target_mem[i].size;
  			ab->qmi.target_mem[idx].type = ab->qmi.target_mem[i].type;
-@@ -2083,23 +2083,25 @@ static int ath11k_qmi_assign_target_mem_
- 			if (ab->qmi.target_mem[i].size > ATH11K_QMI_CALDB_SIZE) {
- 				ath11k_warn(ab, "qmi mem size is low to load caldata\n");
- 				return -EINVAL;
- 			}
- 
-+			if (of_property_read_u32(dev->of_node, "qcom,caldb-addr", &addr))
-+				addr = ATH11K_QMI_CALDB_ADDRESS;
-+
- 			if (ath11k_core_coldboot_cal_support(ab)) {
- 				if (res.flags != IORESOURCE_UNSET) {
- 					ab->qmi.target_mem[idx].paddr =
- 							res.start + host_ddr_sz;
- 					ab->qmi.target_mem[idx].iaddr =
- 						ioremap(ab->qmi.target_mem[idx].paddr,
- 							ab->qmi.target_mem[i].size);
+@@ -2095,11 +2098,14 @@ static int ath11k_qmi_assign_target_mem_
  					if (!ab->qmi.target_mem[idx].iaddr)
  						return -EIO;
  				} else {
 -					ab->qmi.target_mem[idx].paddr =
 -						ATH11K_QMI_CALDB_ADDRESS;
++					if (of_property_read_u32(dev->of_node, "qcom,caldb-addr", &addr))
++						addr = ATH11K_QMI_CALDB_ADDRESS;
 +					ab->qmi.target_mem[idx].paddr = addr;
  					ab->qmi.target_mem[idx].iaddr = NULL;
  				}
  			} else {
 -				ab->qmi.target_mem[idx].paddr = 0;
++				if (of_property_read_u32(dev->of_node, "qcom,caldb-addr", &addr))
++					addr = ATH11K_QMI_CALDB_ADDRESS;
 +				ab->qmi.target_mem[idx].paddr = addr;
  				ab->qmi.target_mem[idx].iaddr = NULL;
- 			}
+			}
 @@ -2302,6 +2306,7 @@ static int ath11k_qmi_load_file_target_m
  	struct qmi_wlanfw_bdf_download_resp_msg_v01 resp;
  	struct qmi_txn txn;
